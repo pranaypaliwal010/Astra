@@ -1,65 +1,148 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#020817">
 <title>ASTRA AI</title>
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;min-height:100vh;background:radial-gradient(circle at 50% 35%,#102c58,#020817 65%);
- color:#d9f5ff;font-family:Arial,sans-serif;display:flex;
- align-items:center;justify-content:center;text-align:center;
+ margin:0;min-height:100vh;background:radial-gradient(ellipse at center,#102e55,#020817 75%);
+ color:#dffaff;font-family:Arial,sans-serif;text-align:center;
+ display:flex;justify-content:center;align-items:center;
 }
-main{width:100%;max-width:500px;padding:25px}
-h1{letter-spacing:9px;color:#64dfff;text-shadow:0 0 20px #168cff}
-#status{color:#8bbbd4;margin:12px}
-.orb{
- width:190px;height:190px;border-radius:50%;margin:35px auto;
- background:radial-gradient(circle at 40% 35%,#eaffff,#55dfff 12%,#0878ca 38%,#03152d 70%);
- box-shadow:0 0 25px #13aaff,0 0 75px #0878ca;
- animation:pulse 3s infinite ease-in-out;
+main{width:100%;max-width:480px;padding:22px}
+h1{letter-spacing:12px;color:#67dcff;text-shadow:0 0 20px #00aaff}
+#status{color:#85b9d8;font-size:13px;letter-spacing:3px}
+.hologram{
+ width:230px;height:300px;margin:20px auto;position:relative;
+ display:flex;align-items:center;justify-content:center;
+ filter:drop-shadow(0 0 15px #16baff);
 }
-@keyframes pulse{50%{transform:scale(1.07);box-shadow:0 0 45px #45dfff,0 0 100px #0878ca}}
-button{
- background:#063d69;color:#dffaff;border:1px solid #39cfff;
- border-radius:30px;padding:14px 24px;font-size:16px;margin:7px;
+.figure{
+ position:relative;width:145px;height:260px;
+ animation:float 3s ease-in-out infinite;
 }
-#reply{min-height:55px;line-height:1.5;margin:20px 0}
-small{color:#679bb8}
+.head{
+ position:absolute;top:0;left:43px;width:60px;height:76px;
+ border:2px solid #8ceaff;border-radius:48% 48% 42% 42%;
+ background:linear-gradient(135deg,#a9f6ff66,#087bbd44);
+ box-shadow:inset 0 0 20px #42caff,0 0 20px #13bfff;
+}
+.hair{
+ position:absolute;top:-8px;left:34px;width:78px;height:90px;
+ border:3px solid #46cfff;border-radius:50% 50% 35% 35%;
+}
+.eye{position:absolute;top:32px;width:9px;height:4px;background:#d8ffff;
+ box-shadow:0 0 10px #fff}
+.eye.left{left:13px}.eye.right{right:13px}
+.neck{position:absolute;top:73px;left:65px;width:17px;height:28px;
+ background:#1598d0aa;border:1px solid #6be5ff}
+.body{
+ position:absolute;top:96px;left:22px;width:102px;height:145px;
+ border:2px solid #4ed7ff;border-radius:45% 45% 15% 15%;
+ background:linear-gradient(120deg,#1ab8e755,#07558b55);
+ box-shadow:inset 0 0 25px #1bbcff;
+}
+.body:before{
+ content:"";position:absolute;top:20px;left:45px;height:110px;
+ border-left:1px solid #8af1ff;opacity:.7
+}
+.scan{
+ position:absolute;top:0;width:100%;height:2px;
+ background:#8afaff;box-shadow:0 0 15px #00d5ff;
+ animation:scan 3s linear infinite
+}
+@keyframes scan{to{top:100%}}
+@keyframes float{50%{transform:translateY(-10px)}}
+#reply{min-height:55px;line-height:1.5;margin:15px 0}
+button,input{
+ border:1px solid #36cfff;border-radius:25px;padding:13px;
+ background:#07375d;color:white;font-size:15px;margin:5px
+}
+button{cursor:pointer}
+input{width:65%;background:#031a30}
+#chat{display:flex;justify-content:center;flex-wrap:wrap}
+small{color:#74a9c6}
 </style>
 </head>
 <body>
 <main>
 <h1>ASTRA</h1>
 <div id="status">PERSONAL AI ASSISTANT</div>
-<div class="orb"></div>
-<div id="reply">Hello. I am ASTRA. Ready when you are.</div>
-<button onclick="speak()">🔊 SPEAK</button>
+<div class="hologram">
+ <div class="figure">
+  <div class="hair"></div>
+  <div class="head">
+   <span class="eye left"></span>
+   <span class="eye right"></span>
+  </div>
+  <div class="neck"></div>
+  <div class="body"></div>
+ </div>
+ <div class="scan"></div>
+</div>
+<div id="reply">Hello. I am ASTRA. Your personal AI assistant.</div>
+<div id="chat">
+ <input id="message" placeholder="Talk to ASTRA...">
+ <button onclick="send()">SEND</button>
+</div>
 <button onclick="listen()">🎙 TALK</button>
-<br><small>Voice prototype • Online AI connection comes next</small>
+<button onclick="speak()">🔊 SPEAK</button>
+<br><br>
+<small>ASTRA v2 • Holographic interface</small>
 </main>
 <script>
+const statusBox=document.getElementById("status");
+const reply=document.getElementById("reply");
+
+function expression(name){
+ statusBox.textContent=name.toUpperCase();
+}
 function say(text){
- document.getElementById("reply").textContent=text;
+ reply.textContent=text;
+ expression("Speaking");
  if("speechSynthesis" in window){
   speechSynthesis.cancel();
   let voice=new SpeechSynthesisUtterance(text);
-  voice.rate=0.95;voice.pitch=1.05;
+  voice.lang="en-IN";
+  voice.rate=.95;
+  voice.pitch=1.1;
+  voice.onend=()=>expression("Idle");
   speechSynthesis.speak(voice);
  }
 }
-function speak(){say("Hello. I am ASTRA. How can I help you?");}
+function speak(){
+ say("Hello. I am ASTRA. How can I help you?");
+}
+function send(){
+ let text=document.getElementById("message").value.trim();
+ if(!text)return;
+ expression("Thinking");
+ document.getElementById("message").value="";
+ reply.textContent="You: "+text+
+ "\n\nI heard you. My online AI brain will be connected in the next step.";
+ expression("Idle");
+}
 function listen(){
  const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!Speech){say("Voice recognition is not supported here. Please use Chrome.");return;}
+ if(!Speech){
+  say("Voice recognition is not supported in this browser. Please try Chrome.");
+  return;
+ }
  const rec=new Speech();
  rec.lang="en-IN";
- rec.onstart=()=>document.getElementById("status").textContent="LISTENING...";
- rec.onend=()=>document.getElementById("status").textContent="PERSONAL AI ASSISTANT";
+ rec.onstart=()=>expression("Listening");
  rec.onerror=()=>say("I could not hear you. Please try again.");
- rec.onresult=e=>say("I heard you say: "+e.results[0][0].transcript);
+ rec.onresult=e=>{
+  document.getElementById("message").value=e.results[0][0].transcript;
+  send();
+ };
+ rec.onend=()=>{
+  if(statusBox.textContent==="LISTENING")expression("Idle");
+ };
  rec.start();
 }
 </script>
