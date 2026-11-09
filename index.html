@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#020817">
+<title>ASTRA AI</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;background:radial-gradient(circle at 50% 35%,#102c58,#020817 65%);
+ color:#d9f5ff;font-family:Arial,sans-serif;display:flex;
+ align-items:center;justify-content:center;text-align:center;
+}
+main{width:100%;max-width:500px;padding:25px}
+h1{letter-spacing:9px;color:#64dfff;text-shadow:0 0 20px #168cff}
+#status{color:#8bbbd4;margin:12px}
+.orb{
+ width:190px;height:190px;border-radius:50%;margin:35px auto;
+ background:radial-gradient(circle at 40% 35%,#eaffff,#55dfff 12%,#0878ca 38%,#03152d 70%);
+ box-shadow:0 0 25px #13aaff,0 0 75px #0878ca;
+ animation:pulse 3s infinite ease-in-out;
+}
+@keyframes pulse{50%{transform:scale(1.07);box-shadow:0 0 45px #45dfff,0 0 100px #0878ca}}
+button{
+ background:#063d69;color:#dffaff;border:1px solid #39cfff;
+ border-radius:30px;padding:14px 24px;font-size:16px;margin:7px;
+}
+#reply{min-height:55px;line-height:1.5;margin:20px 0}
+small{color:#679bb8}
+</style>
+</head>
+<body>
+<main>
+<h1>ASTRA</h1>
+<div id="status">PERSONAL AI ASSISTANT</div>
+<div class="orb"></div>
+<div id="reply">Hello. I am ASTRA. Ready when you are.</div>
+<button onclick="speak()">🔊 SPEAK</button>
+<button onclick="listen()">🎙 TALK</button>
+<br><small>Voice prototype • Online AI connection comes next</small>
+</main>
+<script>
+function say(text){
+ document.getElementById("reply").textContent=text;
+ if("speechSynthesis" in window){
+  speechSynthesis.cancel();
+  let voice=new SpeechSynthesisUtterance(text);
+  voice.rate=0.95;voice.pitch=1.05;
+  speechSynthesis.speak(voice);
+ }
+}
+function speak(){say("Hello. I am ASTRA. How can I help you?");}
+function listen(){
+ const Speech=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!Speech){say("Voice recognition is not supported here. Please use Chrome.");return;}
+ const rec=new Speech();
+ rec.lang="en-IN";
+ rec.onstart=()=>document.getElementById("status").textContent="LISTENING...";
+ rec.onend=()=>document.getElementById("status").textContent="PERSONAL AI ASSISTANT";
+ rec.onerror=()=>say("I could not hear you. Please try again.");
+ rec.onresult=e=>say("I heard you say: "+e.results[0][0].transcript);
+ rec.start();
+}
+</script>
+</body>
+</html>
